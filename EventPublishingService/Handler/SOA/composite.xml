@@ -11,5 +11,29 @@
            xmlns:orawsp="http://schemas.oracle.com/ws/2006/01/policy"
            xmlns:ui="http://xmlns.oracle.com/soa/designer/"
            xmlns:sca-ext="http://xmlns.oracle.com/sca/1.0-ext">
+  <import namespace="http://xmlns.oracle.com/EventPublishingService/Handler/ProcessEvent"
+          location="WSDLs/ProcessEvent.wsdl" importType="wsdl"/>
+  <service name="processevent_client_ep" ui:wsdlLocation="WSDLs/ProcessEvent.wsdl">
+    <interface.wsdl interface="http://xmlns.oracle.com/EventPublishingService/Handler/ProcessEvent#wsdl.interface(ProcessEvent)"
+                    callbackInterface="http://xmlns.oracle.com/EventPublishingService/Handler/ProcessEvent#wsdl.interface(ProcessEventCallback)"/>
+    <binding.ws port="http://xmlns.oracle.com/EventPublishingService/Handler/ProcessEvent#wsdl.endpoint(processevent_client_ep/ProcessEvent_pt)"/>
+    <callback>
+      <binding.ws port="http://xmlns.oracle.com/EventPublishingService/Handler/ProcessEvent#wsdl.endpoint(processevent_client_ep/ProcessEventCallback_pt)"/>
+    </callback>
+  </service>
   <property name="productVersion" type="xs:string" many="false">12.1.3.0.0</property>
+  <component name="ProcessEvent" version="2.0">
+    <implementation.bpel src="BPEL/ProcessEvent.bpel"/>
+    <componentType>
+      <service name="processevent_client" ui:wsdlLocation="WSDLs/ProcessEvent.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/EventPublishingService/Handler/ProcessEvent#wsdl.interface(ProcessEvent)"
+                        callbackInterface="http://xmlns.oracle.com/EventPublishingService/Handler/ProcessEvent#wsdl.interface(ProcessEventCallback)"/>
+      </service>
+    </componentType>
+    <property name="bpel.config.oneWayDeliveryPolicy" type="xs:string" many="false">async.persist</property>
+  </component>
+  <wire>
+    <source.uri>processevent_client_ep</source.uri>
+    <target.uri>ProcessEvent/processevent_client</target.uri>
+  </wire>
 </composite>

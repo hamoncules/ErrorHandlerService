@@ -1,2 +1,4 @@
 Handler/SOA/SCA-INF/*
 .data/*
+Handler/target/*
+Handler/deploy/*
